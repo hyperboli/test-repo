@@ -5,7 +5,8 @@ import time
 N = 8 #количество пинов
 channel = range(N) #берём номер пина на плате из классического  (от 0 до 7) номера пина
 #pins = [21,20,16,12,7,8,25,24]
-pins = [24, 25, 8, 7, 12, 16, 20, 21]
+pins = [26, 19, 13, 6, 5, 11, 9, 10]
+pins = pins[::-1]
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(pins, GPIO.OUT)
@@ -72,26 +73,32 @@ def blade_runner(repetitionsNumber):
     for j in range(r):
         for i in range(256):
             num2dac(i)
-            time.sleep(0.1)
-            darkness():
+            time.sleep(0.05)
+            darkness()
         for i in range(256, -1, -1):
             num2dac(i)
             time.sleep(0.05)
-            darkness():
+            darkness()
 
+def main():
+    while True:
+        print("Введите число повторений:")
+        s = input()
+        try:
+            k = int(s)
+        except ValueError:
+            print("Это не похоже на число")
+            continue
+        if k==-1:
+            exit()
+        if k<0:
+            print("Число повторений не может быть отрицательным")
+            continue
+        blade_runner(k)
+        break
 
-while True:
-    print("Введите число повторений:")
-    s = input()
-    try:
-        k = int(s)
-    except ValueError:
-        print("Это не похоже на число")
-        continue
-    if k==-1:
-        exit()
-    if k<0:
-        print("Число повторений не может быть отрицательным")
-        continue
-    blade_runner(k)
-    break
+try:
+    main()
+finally:
+    GPIO.output(pins, 0)
+    GPIO.cleanup(pins)

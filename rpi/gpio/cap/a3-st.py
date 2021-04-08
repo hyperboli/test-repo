@@ -13,7 +13,7 @@ def decToBinList(decNumber):
     return ans
 
 def sinus(timeq, frequency, samplingFrequency):
-    times = np.arange(0, timeq, samplingFrequency**(-1))
+    times = np.arange(0, 6.28*samplingFrequency, timeq*frequency)
     ndarray = np.sin(times)
     for i in range(len(ndarray)):
         ndarray[i] = (ndarray[i]+1)*255/2
@@ -28,7 +28,7 @@ def sinus(timeq, frequency, samplingFrequency):
     plt.show()
 
     for i in range(timeq*frequency):
-        print(decToBinList(int(ndarray[i])), int(ndarray[i]))
+        print(decToBinList(int(ndarray[i])), int(ndarray[i]), i)
         time.sleep(frequency**(-1))
 
-sinus(20, 1, 10)
+sinus(20, 5, 10)

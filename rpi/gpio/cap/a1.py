@@ -4,8 +4,10 @@ import time
 
 N = 8 #количество пинов
 channel = range(N) #берём номер пина на плате из классического  (от 0 до 7) номера пина
-#pins = [21,20,16,12,7,8,25,24]
-pins = [24, 25, 8, 7, 12, 16, 20, 21]
+#pins = [21,20,16,12,7,8,25,24][24, 25, 8, 7, 12, 16, 20, 21]
+pins = [26, 19, 13, 6, 5, 11, 9, 10]
+pins = pins[::-1]
+
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(pins, GPIO.OUT)
@@ -61,22 +63,33 @@ def lightNumber(number):
 #OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOI
 
 
-s = None
-k = None
+def main():
+    s = None
+    k = None
 
-def num2dac(value):
-    lightNumber(value)
+    def num2dac(value):
+        lightNumber(value)
 
-while True:
-    s = input()
-    try:
-        k = int(s)
-    except ValueError:
-        print("Это не похоже на число")
-        continue
-    if k==-1:
-        exit()
-    elif not(k>=0 and k<=256):
-        print("Число выходит за рамки 256")
-        continue
-    num2dac(k)
+    darkness()
+
+    while True:
+        s = input()
+        try:
+            k = int(s)
+        except ValueError:
+            print("Это не похоже на число")
+            continue
+        if k==-1:
+            darkness()
+            raise SystemExit(1)
+        elif not(k>=0 and k<=256):
+            print("Число выходит за рамки 256")
+            continue
+        darkness()
+        num2dac(k)
+        
+try:
+    main()
+finally:
+    GPIO.output(pins, 0)
+    GPIO.cleanup(pins)

@@ -7,8 +7,8 @@ import time
 N = 8 #количество пинов
 channel = range(N) #берём номер пина на плате из классического  (от 0 до 7) номера пина
 #pins = [21,20,16,12,7,8,25,24]
-pins = [24, 25, 8, 7, 12, 16, 20, 21]
-
+pins = [26, 19, 13, 6, 5, 11, 9, 10]
+pins = pins[::-1]
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(pins, GPIO.OUT)
 
@@ -75,16 +75,17 @@ def blade_runner(repetitionsNumber):
         for i in range(256):
             num2dac(i)
             time.sleep(0.1)
-            darkness():
+            darkness()
         for i in range(256, -1, -1):
             num2dac(i)
             time.sleep(0.05)
-            darkness():
+            darkness()
 
 
 def sinus(timeq, frequency, samplingFrequency):
     times = np.arange(0, timeq, samplingFrequency**(-1))
-    ndarray = np.sin(times)
+    times2 = np.arange(0, 6.28*frequency, 6.28*frequency/len(times))
+    ndarray = np.sin(times2)
     for i in range(len(ndarray)):
         ndarray[i] = (ndarray[i]+1)*255/2
     
@@ -97,24 +98,29 @@ def sinus(timeq, frequency, samplingFrequency):
     plt.ylabel('Амплитуда sin(time)')
     plt.show()
 
-    for i in range(timeq*frequency):
+    print(timeq, frequency, samplingFrequency)
+
+    for i in range(timeq*samplingFrequency):
+        darkness()
+        print(decToBinList(int(ndarray[i])), int(ndarray[i]), i)
         num2dac(int(ndarray[i]))
-        time.sleep(frequency**(-1))
+        time.sleep(samplingFrequency**(-1))
+    darkness()
 
-
-
-while True:
-    print("Введите число повторений:")
+def main():
+    print("Введите параметры:")
     s = input()
     try:
-        k = int(s)
+        k = [int(i) for i in s.split(' ')]
+        k1, k2, k3 = k
     except ValueError:
         print("Это не похоже на число")
-        continue
-    if k==-1:
-        exit()
-    if k<0:
-        print("Число повторений не может быть отрицательным")
-        continue
-    blade_runner(k)
-    break
+    sinus(k1, k2, k3)
+
+try:
+    main()
+finally:
+    GPIO.output(pins, 0)
+    GPIO.cleanup(pins)
+
+#sinus(20, 1, 10)
